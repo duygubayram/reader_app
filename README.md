@@ -1,7 +1,9 @@
 # reader_app
 oop practice with sql, api and tui -- mostly to learn app building after backend processes
 
-'''
+## Architecture Overview
+
+```
 ┌─────────────────────────┐
 │  Bubble Tea TUI (Go)    │  ← UI / client
 │  - menus                │
@@ -20,11 +22,13 @@ oop practice with sql, api and tui -- mostly to learn app building after backend
 ┌───────────┴─────────────┐
 │  SQLite / Postgres      │
 └─────────────────────────┘
+```
 
-==============================================================================
+---
 
-Domain Model Overview
+## Domain Model Overview
 
+```
 User
  ├── user: str                      # unique username (primary identifier)
  ├── display_name: str
@@ -81,4 +85,4 @@ Review
  ├── text: str
  ├── created_at: datetime
  ├── likes: set[User]               # prevents duplicate likes
-'''
+```
