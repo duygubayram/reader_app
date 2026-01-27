@@ -116,7 +116,7 @@ class User:
         self.libraries = []
         self.recommendations = []
         self.active_reads = {}
-        self.create_library("My Library")
+        #self.create_library("My Library")
 
     def add_friend(self, friend_request):
         if friend_request not in self.friends and friend_request != self:

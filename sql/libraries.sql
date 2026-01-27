@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS libraries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    owner TEXT NOT NULL,
+    FOREIGN KEY (owner) REFERENCES users(username)
+);
