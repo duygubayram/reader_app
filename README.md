@@ -2,6 +2,24 @@
 oop practice with sql, api and tui -- mostly to learn app building after backend processes
 will be polished later (including the readme)
 
+## Running the Application
+
+### 1. Start the backend API
+
+From the project root:
+
+```bash
+pip install -r requirements.txt
+uvicorn api:app --reload
+```
+
+### 2. On a separate terminal
+
+```bash
+cd book-tui
+go run .
+```
+
 ## Architecture Overview
 
 ```
