@@ -1,5 +1,6 @@
 # reader_app
 oop practice with sql, api and tui -- mostly to learn app building after backend processes
+will be polished later (including the readme)
 
 ## Architecture Overview
 
