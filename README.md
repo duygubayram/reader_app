@@ -43,26 +43,6 @@ go run .
 └─────────────────────────┘
 ```
 
----
-
-tui/
-├── go.mod
-├── main.go
-├── model/
-│   ├── model.go        # app state
-│   ├── update.go       # input handling
-│   └── view.go         # layout & rendering
-├── api/
-│   └── client.go       # FastAPI client
-├── views/
-│   ├── library.go
-│   ├── book.go
-│   ├── profile.go
-│   └── reading.go
-└── styles/
-    └── styles.go       # Lip Gloss styles
-
----
 
 ## Domain Model Overview
 
