@@ -200,7 +200,7 @@ class LibraryRepository:
             (library_id, book_id, shelf)
         )
 
-    def move_books(self, library_id, book_id, shelf):
+    def move_book(self, library_id, book_id, shelf):
         self.db.execute(
             """
             UPDATE library_books

@@ -4,9 +4,10 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from passlib.hash import bcrypt
+from datetime import datetime
 from main import (
     UserManager, User, BookManager,
-    ReadingSession, Library
+    ReadingSession, Library, Review
 )
 from repositories import (
     UserRepository, FriendRepository,
@@ -66,7 +67,7 @@ def load_state():
     for username, user in user_manager.users.items():
         rows = library_repo.load_libraries_for_user(username)
         for row in rows:
-            lib = Library(row["name"], user)
+            lib = Library(row["id"], row["name"], user)
             lib_id = row["id"]
 
             books = library_repo.load_books_for_library(lib_id)
@@ -162,7 +163,7 @@ def register(req: RegisterRequest):
 
     # create default library
     lib_id = library_repo.create_library("My Library", user.user)
-    lib = Library("My Library", user)
+    lib = Library(lib_id, "My Library", user)
     user.libraries.append(lib)
 
     return {
@@ -297,6 +298,14 @@ def review_book(book_id: int, req: ReviewRequest):
         raise HTTPException(404)
 
     review = book.add_review(user, req.text, req.rating)
+    # Save the review in the database
+    review_repo.save(
+        user=user.user,
+        book_id=book_id,
+        text=req.text,
+        rating=req.rating,
+        created_at=review.created_at
+    )
     return {
         "status": "ok",
         "rating": review.rating
@@ -353,7 +362,8 @@ def create_library(username: str, name: str):
     if not user:
         raise HTTPException(404)
     lib_id = library_repo.create_library(name, username)
-    lib = user.create_library(name)
+    lib = Library(lib_id, name, user)
+    user.libraries.append(lib)
     return {"id": lib_id, "name": name}
 
 @app.post("/libraries/{lib_id}/books")
@@ -362,16 +372,38 @@ def add_book(lib_id: int, username: str, book_id: int, shelf: str):
     book = book_manager.get(book_id)
     if not user or not book:
         raise HTTPException(404)
+    library = None
+    for lib in user.libraries:
+        if lib.id == lib_id:
+            library = lib
+            break
+    if not library:
+        raise HTTPException(404)
     library_repo.add_book(lib_id, book_id, shelf)
-    user.libraries[0].add_book(book, shelf, user)
+    library.add_book(book, shelf, user)
     return {"status": "added"}
 
 @app.post("/libraries/{lib_id}/move")
 def move_book(lib_id: int, username: str, book_id: int, shelf: str):
     user = user_manager.users.get(username)
     book = book_manager.get(book_id)
+    if not user or not book:
+        raise HTTPException(404)
+    library = None
+    for lib in user.libraries:
+        if lib.id == lib_id:
+            library = lib
+            break
+    if not library:
+        raise HTTPException(404)
     library_repo.move_book(lib_id, book_id, shelf)
-    user.libraries[0].move_book(book, "to_read", shelf, user)
+    for s, books in library.shelves.items():
+        if book in books:
+            from_shelf = s
+            break
+    else:
+        raise HTTPException(400)
+    library.move_book(book, from_shelf, shelf, user)
     return {"status": "moved"}
 
 @app.get("/users/{username}/libraries")

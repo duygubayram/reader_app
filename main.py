@@ -80,6 +80,24 @@ Review
  ├── likes: set[User]               # prevents duplicate likes
 '''
 
+# tui/
+# ├── main.go
+# ├── app/
+# │   ├── model.go
+# │   ├── views.go
+# │   ├── update_handlers.go
+# │   └── api_client.go
+# ├── types/
+# │   └── types.go
+# ├── styles/
+# │   └── styles.go
+# ├── views/
+# │   ├── shelf.go
+# │   ├── book_details.go
+# │   ├── library.go
+# │   └── reading.go
+# └── go.mod
+
 from datetime import datetime
 
 class UserManager:
@@ -211,7 +229,8 @@ class ReadingSession:
 class Library:
     permission_error = "Only the owner can modify this library."
 
-    def __init__(self, name, owner):
+    def __init__(self, id, name, owner):
+        self.id = id
         self.name = name
         self.owner = owner
         self.shelves = {
@@ -252,6 +271,7 @@ class Library:
 
     def to_database_row(self):
         return {
+            "id": self.id,
             "name": self.name,
             "owner": self.owner.user
         }
